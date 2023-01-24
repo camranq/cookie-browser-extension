@@ -1,0 +1,8 @@
+{   
+    "name": "My Extension",
+    "version": "0.0.1",
+    "description": "Handling cookie notices",
+    "permissions": ["storage", "tabs"],
+
+    "manifest_version": 3
+}
