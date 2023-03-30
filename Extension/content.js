@@ -7,7 +7,7 @@ const rejOpts = [
   'dismiss',
   'reject all',
   'disagree',
-  'no thanks',
+  'No thanks',
   'I do not accept',
   'Click here to opt out of Google Analytics',
   'Require Opt-Out',
@@ -30,7 +30,8 @@ const rejOpts = [
   'Reject all...',
 
   'decline all',
-  'deny'
+  'deny',
+  "Reject All"
 ];
 
 // function to check if a given element is a cookie banner
@@ -54,13 +55,13 @@ function clickRejectButton() {
     for (let j = 0; j < rejOpts.length; j++) { //loop through all rejection options
       if (buttonContent.includes(rejOpts[j])) { //convert rejection options to lowercase
         buttons[i].click();
-        console.log(buttonContent);
-        /*
-        console.log('The reject button is ' + buttons[i]);
-        console.log('The matching dictionary word is ')
-        console.log(rejOpts[j]);
+        //chrome.runtime.sendMessage({type: "buttonClicked"});
+        //console.log(buttonContent);
+        //console.log('The reject button is ' + buttons[i]);
+        //console.log('The matching dictionary word is ')
+        //console.log(rejOpts[j]);
         console.log("Reject option found and clicked!");
-        */
+        
 
         return true;
       }
