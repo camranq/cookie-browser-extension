@@ -18,7 +18,7 @@ const rejOpts = [
   'No, I want to find out more',
   'Click here to turn off cookies for this site',
   'Dismiss cookie notification',
-  '"Disable third party non-functional cookies."',
+  'Disable third party non-functional cookies.',
   'Disable them/read more',
   'Disable analytics',
   'Disallow cookies',
@@ -46,33 +46,36 @@ function isCookieBanner(elem) {
   return false;
 }
 
-// function to find and click reject button
+//Function to find and click the reject all button
 function clickRejectButton() {
-  const buttons = document.getElementsByTagName('button'); //get all button elements on the page
-  console.log(buttons);
-  for (let i = 0; i < buttons.length; i++) { //loop through all buttons
-    const buttonContent = buttons[i].innerHTML.toLowerCase() || buttons[i].innerText.toLowerCase(); //get the button's innerHTML and innerText
-    for (let j = 0; j < rejOpts.length; j++) { //loop through all rejection options
-      if (buttonContent.includes(rejOpts[j])) { //convert rejection options to lowercase
-        buttons[i].click();
-        //chrome.runtime.sendMessage({type: "buttonClicked"});
-        //console.log(buttonContent);
-        //console.log('The reject button is ' + buttons[i]);
-        //console.log('The matching dictionary word is ')
-        //console.log(rejOpts[j]);
-        console.log("Reject option found and clicked!");
-        
+  //Get all buttons on the page and store them in a variable
+  const buttons = document.querySelectorAll("button");
 
-        return true;
+  //Variable to track if any button has been clicked (initially set to false)
+  let clicked = false;
+
+  //Loop through all buttons on the page
+  buttons.forEach((button) => {
+    const content = button.innerHTML.trim().toLowerCase(); //Get the button's inner HTML, trim any whitespace, and convert to lowercase
+    const id = button.id.toLowerCase();     //Get the button's ID and also convert it to lowercase
+
+    // Loop through each option in the rejOpts dictionary
+    rejOpts.forEach((opt) => {
+      const lowerOpt = opt.toLowerCase(); // Convert the current option to lowercase
+
+      //If the button's innerHTML or ID matches the current option, click the button and set clicked to true
+      if (content === lowerOpt || id === lowerOpt) {
+        button.click();
+        clicked = true;
       }
-    }
-  }
-  console.log("Extension unable to locate a reject button")
-  return false;
+    });
+  });
+  //Return true if any button was clicked, otherwise return false
+  return clicked;
 }
 
 
-// wait for page to fully load before running
+//Wait for the page to fully load before running
 window.onload = () => {
   clickRejectButton();
 };
