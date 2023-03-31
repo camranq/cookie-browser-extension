@@ -29,9 +29,67 @@ const rejOpts = [
   'Do Not Sell My Info',
   'Reject all...',
 
-  'decline all',
+  'Decline All',
   'deny',
   "Reject All"
+];
+
+const moreOpts = [
+  "more options", 
+  "allow selection", 
+  "see full vendor list", 
+  "cookie settings", 
+  "our partners", 
+  "change my preferences", 
+  "settings", 
+  "change preferences", 
+  "change settings", 
+  "manage", 
+  "browser settings", 
+  "how to manage cookies", 
+  "manage your cookie preferences", 
+  "manage your account", 
+  "manage your Consents", 
+  "manage your settings", 
+  "manage your Cookie Settings", 
+  "manage your preferences", 
+  "manage cookies and view our policy", 
+  "manage Tracking Options", 
+  "manage Privacy Settings", 
+  "set cookie settings", 
+  "manage Email Preferences", 
+  "Manage Cookie settings", 
+  "Managing cookies", 
+  "set cookies", 
+  "adjust your browser settings.", 
+  "click here to change your settings", 
+  "cookie preferences", 
+  "Privacy settings", 
+  "View preferences", 
+  "Privacy dashboard", 
+  "Customise Cookies", 
+  "- See how to change settings »", 
+  "control your settings", 
+  "please see our cookies page", 
+  "adjust your cookie settings", 
+  "My Cookie Preferences", 
+  "I need help choosing",
+  "Confirm your choices", 
+  "View Preferences", 
+  "updated privacy and cookies policy", 
+  "updated privacy policy", 
+  "third-party companies", 
+  "their partners' use of cookies", 
+  "view our privacy policy", 
+  "view our cookie policy.", 
+  "view our cookie policy", 
+  "terms of service", 
+  "terms & conditions",
+  "read our cookie policy here", 
+  "read our Cookie Policy", 
+  "read more about what cookies we use here", 
+  "read more about our cookies", 
+  "process personal data"
 ];
 
 // function to check if a given element is a cookie banner
@@ -44,6 +102,26 @@ function isCookieBanner(elem) {
     }
   }
   return false;
+}
+
+function showMessage(text, backgroundColour) {
+  const messageElement = document.createElement("div");
+  messageElement.innerHTML = text;
+  messageElement.style.position = "fixed";
+  messageElement.style.top = "10px";
+  messageElement.style.right = "10px";
+  messageElement.style.zIndex = "9999";
+  messageElement.style.backgroundColor = backgroundColour;
+  messageElement.style.border = "1px solid white";
+  messageElement.style.borderRadius = "5px";
+  messageElement.style.padding = "10px";
+  messageElement.style.fontFamily = "Arial, sans-serif";
+  messageElement.style.fontSize = "14px";
+  document.body.appendChild(messageElement);
+
+  setTimeout(() => {
+    messageElement.remove();
+  }, 5000);
 }
 
 //Function to find and click the reject all button
@@ -70,10 +148,24 @@ function clickRejectButton() {
       }
     });
   });
-  //Return true if any button was clicked, otherwise return false
+
+  if (clicked) {
+    showMessage("Reject All Button Found!", "green");
+  } else {
+    showMessage("Unable to locate reject button", "red");
+  }
+
   return clicked;
 }
 
+const tabs = [
+  "non-essential cookies",
+  "third party cookies",
+  "strictly necessary cookies",
+  "performance cookies",
+  "functional cookies",
+  "targeting cookies"
+];
 
 //Wait for the page to fully load before running
 window.onload = () => {
