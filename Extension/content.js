@@ -24,14 +24,15 @@ const rejOpts = [
   'Disallow cookies',
   'I DO NOT ACCEPT',
   'Disable All',
-  '"No take me to settings"',
+  '"No, take me to settings"',
   'Reject cookies',
   'Do Not Sell My Info',
   'Reject all...',
 
   'Decline All',
   'deny',
-  "Reject All"
+  'Reject All',
+  'Reject'
 ];
 
 const moreOpts = [
@@ -92,7 +93,7 @@ const moreOpts = [
   "process personal data"
 ];
 
-// function to check if a given element is a cookie banner
+//Function to check if a given element is a cookie banner
 function isCookieBanner(elem) {
   const classNames = elem.classList;
   for (let i = 0; i < classNames.length; i++) {
@@ -104,6 +105,7 @@ function isCookieBanner(elem) {
   return false;
 }
 
+//Function to display a popup to the user
 function showMessage(text, backgroundColour) {
   const messageElement = document.createElement("div");
   messageElement.innerHTML = text;
@@ -121,7 +123,7 @@ function showMessage(text, backgroundColour) {
 
   setTimeout(() => {
     messageElement.remove();
-  }, 5000);
+  }, 5000); //5 seconds
 }
 
 //Function to find and click the reject all button
@@ -152,7 +154,7 @@ function clickRejectButton() {
   if (clicked) {
     showMessage("Reject All Button Found!", "green");
   } else {
-    showMessage("Unable to locate reject button", "red");
+    showMessage("Reject Button Not Found/Incompatible Banner", "red");
   }
 
   return clicked;
