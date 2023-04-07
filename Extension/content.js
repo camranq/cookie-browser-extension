@@ -24,7 +24,7 @@ const rejOpts = [
   'Disallow cookies',
   'I DO NOT ACCEPT',
   'Disable All',
-  '"No, take me to settings"',
+  'No take me to settings',
   'Reject cookies',
   'Do Not Sell My Info',
   'Reject all...',
@@ -35,7 +35,7 @@ const rejOpts = [
   'Reject'
 ];
 
-const moreOpts = [
+const options = [
   "more options", 
   "allow selection", 
   "see full vendor list", 
@@ -90,7 +90,18 @@ const moreOpts = [
   "read our Cookie Policy", 
   "read more about what cookies we use here", 
   "read more about our cookies", 
-  "process personal data"
+  "process personal data",
+  "MORE OPTIONS",
+  "show purposes"
+];
+
+const types = [
+  "non-essential cookies",
+  "third party cookies",
+  "strictly necessary cookies",
+  "performance cookies",
+  "functional cookies",
+  "targeting cookies"
 ];
 
 //Function to check if a given element is a cookie banner
@@ -128,11 +139,11 @@ function showMessage(text, backgroundColour) {
 
 //Function to find and click the reject all button
 function clickRejectButton() {
-  //Get all buttons on the page and store them in a variable
-  const buttons = document.querySelectorAll("button");
-
   //Variable to track if any button has been clicked (initially set to false)
   let clicked = false;
+  
+  //Get all buttons on the page and store them in a variable
+  const buttons = document.querySelectorAll("button");
 
   //Loop through all buttons on the page
   buttons.forEach((button) => {
@@ -160,16 +171,78 @@ function clickRejectButton() {
   return clicked;
 }
 
-const tabs = [
-  "non-essential cookies",
-  "third party cookies",
-  "strictly necessary cookies",
-  "performance cookies",
-  "functional cookies",
-  "targeting cookies"
-];
+function clickRejectButton2() {
+  //Variable to track if any button has been clicked (initially set to false)
+  let clicked = false;
+  
+  //Get all buttons on the page and store them in a variable
+  const allElements = document.querySelectorAll("*");
+  const buttons = [];
+  
+  allElements.forEach((element) => {
+    const id = element.id.toLowerCase();
+
+    if (id.includes("button")) {
+      buttons.push(element);
+    }
+  });
+  
+  //Loop through all buttons on the page
+  buttons.forEach((button) => {
+    const content = button.innerHTML.trim().toLowerCase(); //Get the button's inner HTML, trim any whitespace, and convert to lowercase
+    const id = button.id.toLowerCase();     //Get the button's ID and also convert it to lowercase
+
+    // Loop through each option in the rejOpts dictionary
+    rejOpts.forEach((opt) => {
+      const lowerOpt = opt.toLowerCase(); // Convert the current option to lowercase
+
+      //If the button's innerHTML or ID matches the current option, click the button and set clicked to true
+      if (content === lowerOpt || id === lowerOpt) {
+        button.click();
+        clicked = true;
+      }
+    });
+  });
+
+  if (clicked) {
+    showMessage("Reject All Button Found!", "green");
+  } else {
+    showMessage("Reject Button Not Found/Incompatible Banner", "red");
+  }
+
+  return clicked;
+}
+
+function clickMoreOptionsButton() {
+  const buttons = document.querySelectorAll("button");
+  let clicked = false;
+
+  buttons.forEach((button) => {
+    const content = button.innerHTML.trim().toLowerCase();
+    const id = button.id.toLowerCase();
+
+    options.forEach((opt) => {
+      const lowerOpt = opt.toLowerCase();
+
+      if (content === lowerOpt || id === lowerOpt) {
+        button.click();
+        clicked = true;
+      }
+    });
+  });
+
+  return clicked;
+}
+
+function allSteps() {
+  if (clickRejectButton() === false) {
+    if (clickRejectButton2() === false) {
+      clickMoreOptionsButton();
+    }
+  }
+}
 
 //Wait for the page to fully load before running
 window.onload = () => {
-  clickRejectButton();
-};
+  setTimeout(allSteps(), 1500);
+}
