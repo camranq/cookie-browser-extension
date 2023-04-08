@@ -242,7 +242,28 @@ function allSteps() {
   }
 }
 
+function checkForCookieBanner() {
+  const allElements = document.querySelectorAll('*');
+  let foundMatch = false;
+
+  for (const element of allElements) {
+    if (window.id_attributes.some(id => element.id.indexOf(id) !== -1)) {
+      console.log(`Match found: ${element.id}`);
+      showMessage("worked", "green");
+      foundMatch = true;
+      break;
+    }
+  }
+
+  if (!foundMatch) {
+    console.log('No match found');
+    showMessage("failed", "red");
+  }
+
+  return foundMatch;
+}
+
 //Wait for the page to fully load before running
 window.onload = () => {
-  setTimeout(allSteps(), 1500);
+  setTimeout(checkForCookieBanner(), 1500);
 }

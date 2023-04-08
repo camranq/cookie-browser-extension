@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Cookie Handling Extension",
   "description": "Handles cookie consent options to decline them for you.",
-  "version": "0.2.3",
+  "version": "0.2.4",
 
   "icons": {
     "16": "icons/icon16.png"
@@ -17,7 +17,7 @@
 
   "content_scripts": [{
     "matches": ["https://*/*"],
-    "js": ["content.js"]
+    "js": ["content.js", "id_attributes.js"]
   }],
   
   "permissions": ["activeTab"]
