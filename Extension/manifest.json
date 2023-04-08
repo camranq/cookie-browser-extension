@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Cookie Handling Extension",
   "description": "Handles cookie consent options to decline them for you.",
-  "version": "0.2.4",
+  "version": "0.3.0",
 
   "icons": {
     "16": "icons/icon16.png"

@@ -104,18 +104,6 @@ const types = [
   "targeting cookies"
 ];
 
-//Function to check if a given element is a cookie banner
-function isCookieBanner(elem) {
-  const classNames = elem.classList;
-  for (let i = 0; i < classNames.length; i++) {
-    if (classNames[i].toLowerCase().includes('banner') || classNames[i].toLowerCase().includes('consent')) {
-      console.log("Banner found");
-      return true;
-    }
-  }
-  return false;
-}
-
 //Function to display a popup to the user
 function showMessage(text, backgroundColour) {
   const messageElement = document.createElement("div");
@@ -137,13 +125,35 @@ function showMessage(text, backgroundColour) {
   }, 5000); //5 seconds
 }
 
+//Function to search for a cookie banner
+function checkForCookieBanner() {
+  const allElements = document.querySelectorAll('*');
+  let foundMatchElement = null;
+
+  for (const element of allElements) {
+    if (window.id_attributes.some(id => element.id.indexOf(id) !== -1)) {
+      console.log(`Banner ID Match found: ${element.id}`);
+      //showMessage("worked", "green");
+      foundMatchElement = element;
+      break;
+    }
+  }
+
+  if (!foundMatchElement) {
+    console.log('No Banner ID Match Found');
+    //showMessage("failed", "red");
+  }
+
+  return foundMatchElement;
+}
+
 //Function to find and click the reject all button
-function clickRejectButton() {
+function clickRejectButton(cookieBanner) {
   //Variable to track if any button has been clicked (initially set to false)
   let clicked = false;
-  
+  console.log(cookieBanner);
   //Get all buttons on the page and store them in a variable
-  const buttons = document.querySelectorAll("button");
+  const buttons = cookieBanner ? cookieBanner.querySelectorAll("button") : document.querySelectorAll("button");
 
   //Loop through all buttons on the page
   buttons.forEach((button) => {
@@ -157,6 +167,7 @@ function clickRejectButton() {
       //If the button's innerHTML or ID matches the current option, click the button and set clicked to true
       if (content === lowerOpt || id === lowerOpt) {
         button.click();
+        console.log("The button was:", button);
         clicked = true;
       }
     });
@@ -242,28 +253,12 @@ function allSteps() {
   }
 }
 
-function checkForCookieBanner() {
-  const allElements = document.querySelectorAll('*');
-  let foundMatch = false;
 
-  for (const element of allElements) {
-    if (window.id_attributes.some(id => element.id.indexOf(id) !== -1)) {
-      console.log(`Match found: ${element.id}`);
-      showMessage("worked", "green");
-      foundMatch = true;
-      break;
-    }
-  }
-
-  if (!foundMatch) {
-    console.log('No match found');
-    showMessage("failed", "red");
-  }
-
-  return foundMatch;
-}
 
 //Wait for the page to fully load before running
 window.onload = () => {
-  setTimeout(checkForCookieBanner(), 1500);
+  const cookieBannerElement = checkForCookieBanner(); // Call checkForCookieBanner() and store the returned value in cookieBannerElement
+  setTimeout(() => {
+    clickRejectButton(cookieBannerElement); // Call clickRejectButton() and pass the found cookie banner element or null if not found
+  }, 500);
 }
