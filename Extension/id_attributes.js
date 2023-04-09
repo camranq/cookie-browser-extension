@@ -1,7 +1,4 @@
 window.id_attributes = [
-  "_evidon_banner",
-  "onetrust-consent-sdk",
-  "onetrust-banner-sdk",
   "#stickyCookieBar",
   ".cookiebar-bar:not(body):not(html)",
   "#sliding-popup.sliding-popup-bottom",
@@ -13736,5 +13733,9 @@ window.id_attributes = [
   '#divCookiealert',
   '#coi-banner-wrapper',
   '#cookiepolicybox',
-  '.cookies-tooltip'
+  '.cookies-tooltip',
+
+  "_evidon_banner",
+  "onetrust-consent-sdk",
+  "onetrust-banner-sdk",
 ];

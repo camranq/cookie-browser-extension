@@ -32,7 +32,8 @@ const rejOpts = [
   'Decline All',
   'deny',
   'Reject All',
-  'Reject'
+  'Reject',
+  'Reject Non-Essential Cookies'
 ];
 
 const options = [
@@ -127,23 +128,27 @@ function showMessage(text, backgroundColour) {
 
 //Function to search for a cookie banner
 function checkForCookieBanner() {
+  //Select all elements on the page
   const allElements = document.querySelectorAll('*');
-  let foundMatchElement = null;
+  let foundMatchElement = null; //Initialise variable to store the matched element 
 
+  //Loop through all elements on the page
   for (const element of allElements) {
+    //Check if the 'id' attribute of the current element partially or fully matches any value in the 'id_attributes' array
     if (window.id_attributes.some(id => element.id.indexOf(id) !== -1)) {
+    //if (window.id_attributes.some(attr => attr.indexOf(element.id) !== -1)) {
       console.log(`Banner ID Match found: ${element.id}`);
       //showMessage("worked", "green");
-      foundMatchElement = element;
-      break;
+      foundMatchElement = element; //Store the matched element
+      break; //Break from the loop once a match is found
     }
   }
 
-  if (!foundMatchElement) {
+  if (!foundMatchElement) { //If no match was found
     console.log('No Banner ID Match Found');
-    //showMessage("failed", "red");
+    showMessage("Banner Missing or Incompatible", "red");
   }
-
+  //Return the matched element, this could also remain null which is important for the next function
   return foundMatchElement;
 }
 
@@ -152,21 +157,25 @@ function clickRejectButton(cookieBanner) {
   //Variable to track if any button has been clicked (initially set to false)
   let clicked = false;
   console.log(cookieBanner);
-  //Get all buttons on the page and store them in a variable
+  
+  /* Conditional expression:
+  If cookieBanner is truthy, then only select all buttons within that HTML snippet
+  If cookieBanner is falsy, no banner was detected so scan the entire page as a last resort
+  */
   const buttons = cookieBanner ? cookieBanner.querySelectorAll("button") : document.querySelectorAll("button");
 
   //Loop through all buttons on the page
   buttons.forEach((button) => {
     const content = button.innerHTML.trim().toLowerCase(); //Get the button's inner HTML, trim any whitespace, and convert to lowercase
-    const id = button.id.toLowerCase();     //Get the button's ID and also convert it to lowercase
+    const id = button.id.toLowerCase();  //Get the button's ID and also convert it to lowercase
 
     // Loop through each option in the rejOpts dictionary
     rejOpts.forEach((opt) => {
       const lowerOpt = opt.toLowerCase(); // Convert the current option to lowercase
 
       //If the button's innerHTML or ID matches the current option, click the button and set clicked to true
-      if (content === lowerOpt || id === lowerOpt) {
-        button.click();
+      if (content.indexOf(lowerOpt) !== -1 || id.indexOf(lowerOpt) !== -1) { //-1 being returned means there was no match
+        button.click(); //Click the reject button
         console.log("The button was:", button);
         clicked = true;
       }
@@ -174,9 +183,9 @@ function clickRejectButton(cookieBanner) {
   });
 
   if (clicked) {
-    showMessage("Reject All Button Found!", "green");
+    showMessage("Cookies Rejected!", "green");
   } else {
-    showMessage("Reject Button Not Found/Incompatible Banner", "red");
+    showMessage("No Reject All Option", "red");
   }
 
   return clicked;
@@ -246,19 +255,15 @@ function clickMoreOptionsButton() {
 }
 
 function allSteps() {
-  if (clickRejectButton() === false) {
-    if (clickRejectButton2() === false) {
-      clickMoreOptionsButton();
-    }
-  }
+  const cookieBannerElement = checkForCookieBanner(); // Call checkForCookieBanner() and store the returned value in cookieBannerElement
+  setTimeout(() => {
+    clickRejectButton(cookieBannerElement); // Call clickRejectButton() and pass the found cookie banner element or null if not found
+  }, 250);
 }
 
 
 
 //Wait for the page to fully load before running
 window.onload = () => {
-  const cookieBannerElement = checkForCookieBanner(); // Call checkForCookieBanner() and store the returned value in cookieBannerElement
-  setTimeout(() => {
-    clickRejectButton(cookieBannerElement); // Call clickRejectButton() and pass the found cookie banner element or null if not found
-  }, 500);
+  allSteps();
 }
