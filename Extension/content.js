@@ -144,9 +144,9 @@ function checkForCookieBanner() {
     }
   }
 
-  if (!foundMatchElement) { //If no match was found
+  if (foundMatchElement == null) { //If no match was found
     console.log('No Banner ID Match Found');
-    showMessage("Banner Missing or Incompatible", "red");
+    showMessage("No Banner ID Match", "B5535B");
   }
   //Return the matched element, this could also remain null which is important for the next function
   return foundMatchElement;
@@ -174,9 +174,11 @@ function clickRejectButton(cookieBanner) {
       const lowerOpt = opt.toLowerCase(); // Convert the current option to lowercase
 
       //If the button's innerHTML or ID matches the current option, click the button and set clicked to true
+      //if (content === lowerOpt || id === lowerOpt) {
       if (content.indexOf(lowerOpt) !== -1 || id.indexOf(lowerOpt) !== -1) { //-1 being returned means there was no match
         button.click(); //Click the reject button
         console.log("The button was:", button);
+        console.log("The dict was:", lowerOpt);
         clicked = true;
       }
     });
@@ -191,51 +193,11 @@ function clickRejectButton(cookieBanner) {
   return clicked;
 }
 
-function clickRejectButton2() {
-  //Variable to track if any button has been clicked (initially set to false)
+function clickMoreOptionsButton(cookieBanner) {
+  //const buttons = document.querySelectorAll("button");
   let clicked = false;
-  
-  //Get all buttons on the page and store them in a variable
-  const allElements = document.querySelectorAll("*");
-  const buttons = [];
-  
-  allElements.forEach((element) => {
-    const id = element.id.toLowerCase();
 
-    if (id.includes("button")) {
-      buttons.push(element);
-    }
-  });
-  
-  //Loop through all buttons on the page
-  buttons.forEach((button) => {
-    const content = button.innerHTML.trim().toLowerCase(); //Get the button's inner HTML, trim any whitespace, and convert to lowercase
-    const id = button.id.toLowerCase();     //Get the button's ID and also convert it to lowercase
-
-    // Loop through each option in the rejOpts dictionary
-    rejOpts.forEach((opt) => {
-      const lowerOpt = opt.toLowerCase(); // Convert the current option to lowercase
-
-      //If the button's innerHTML or ID matches the current option, click the button and set clicked to true
-      if (content === lowerOpt || id === lowerOpt) {
-        button.click();
-        clicked = true;
-      }
-    });
-  });
-
-  if (clicked) {
-    showMessage("Reject All Button Found!", "green");
-  } else {
-    showMessage("Reject Button Not Found/Incompatible Banner", "red");
-  }
-
-  return clicked;
-}
-
-function clickMoreOptionsButton() {
-  const buttons = document.querySelectorAll("button");
-  let clicked = false;
+  const buttons = cookieBanner ? cookieBanner.querySelectorAll("button") : document.querySelectorAll("button");
 
   buttons.forEach((button) => {
     const content = button.innerHTML.trim().toLowerCase();
@@ -244,26 +206,36 @@ function clickMoreOptionsButton() {
     options.forEach((opt) => {
       const lowerOpt = opt.toLowerCase();
 
-      if (content === lowerOpt || id === lowerOpt) {
+      if (content.indexOf(lowerOpt) !== -1 || id.indexOf(lowerOpt) !== -1) {
         button.click();
         clicked = true;
       }
     });
   });
 
+  if (clicked) {
+    showMessage("More Options Found", "orange");
+  } else {
+    showMessage("Bad Banner", "red");
+  }
+
   return clicked;
 }
 
 function allSteps() {
-  const cookieBannerElement = checkForCookieBanner(); // Call checkForCookieBanner() and store the returned value in cookieBannerElement
+  const cookieBanner = checkForCookieBanner(); // Call checkForCookieBanner() and store the returned value in cookieBanner
   setTimeout(() => {
-    clickRejectButton(cookieBannerElement); // Call clickRejectButton() and pass the found cookie banner element or null if not found
-  }, 250);
+    if(clickRejectButton(cookieBanner) === false) {// Call clickRejectButton() and pass the found cookie banner element or null if not found
+      clickMoreOptionsButton(cookieBanner);
+    } 
+  }, 250); //Wait 0.25s
 }
 
 
 
 //Wait for the page to fully load before running
 window.onload = () => {
-  allSteps();
+  setTimeout(() => {
+    allSteps();
+  }, 1000); //Wait 1.5s
 }
