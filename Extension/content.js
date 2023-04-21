@@ -11,7 +11,6 @@ const rejOpts = [
   'I do not accept',
   'Click here to opt out of Google Analytics',
   'Require Opt-Out',
-  'No',
   'I Reject',
   'I Refuse',
   'I Do Not Agree',
@@ -33,7 +32,8 @@ const rejOpts = [
   'deny',
   'Reject All',
   'Reject',
-  'Reject Non-Essential Cookies'
+  'Reject Non-Essential Cookies',
+  'Do not use analytics cookies'
 ];
 
 const options = [
@@ -130,7 +130,7 @@ function showMessage(text, backgroundColour) {
 function checkForCookieBanner() {
   //Select all elements on the page
   const allElements = document.querySelectorAll('*');
-  let foundMatchElement = null; //Initialise variable to store the matched element 
+  let foundMatchElement = null; //Initialise variable to store the cookie banner if found
 
   //Loop through all elements on the page
   for (const element of allElements) {
@@ -144,7 +144,7 @@ function checkForCookieBanner() {
     }
   }
 
-  if (foundMatchElement == null) { //If no match was found
+  if (foundMatchElement === null) { //If no match was found
     console.log('No Banner ID Match Found');
     showMessage("No Banner ID Match", "B5535B");
   }
@@ -167,7 +167,7 @@ function clickRejectButton(cookieBanner) {
   //Loop through all buttons on the page
   buttons.forEach((button) => {
     const content = button.innerHTML.trim().toLowerCase(); //Get the button's inner HTML, trim any whitespace, and convert to lowercase
-    const id = button.id.toLowerCase();  //Get the button's ID and also convert it to lowercase
+    //const id = button.id.toLowerCase();  //Get the button's ID and also convert it to lowercase
 
     // Loop through each option in the rejOpts dictionary
     rejOpts.forEach((opt) => {
@@ -175,7 +175,8 @@ function clickRejectButton(cookieBanner) {
 
       //If the button's innerHTML or ID matches the current option, click the button and set clicked to true
       //if (content === lowerOpt || id === lowerOpt) {
-      if (content.indexOf(lowerOpt) !== -1 || id.indexOf(lowerOpt) !== -1) { //-1 being returned means there was no match
+      //if (content.indexOf(lowerOpt) !== -1 || id.indexOf(lowerOpt) !== -1) {
+      if (content.indexOf(lowerOpt) !== -1 ) { //-1 being returned means there was no match
         button.click(); //Click the reject button
         console.log("The button was:", button);
         console.log("The dict was:", lowerOpt);
@@ -194,19 +195,19 @@ function clickRejectButton(cookieBanner) {
 }
 
 function clickMoreOptionsButton(cookieBanner) {
-  //const buttons = document.querySelectorAll("button");
   let clicked = false;
 
   const buttons = cookieBanner ? cookieBanner.querySelectorAll("button") : document.querySelectorAll("button");
 
   buttons.forEach((button) => {
     const content = button.innerHTML.trim().toLowerCase();
-    const id = button.id.toLowerCase();
+    //const id = button.id.toLowerCase();
 
     options.forEach((opt) => {
       const lowerOpt = opt.toLowerCase();
 
-      if (content.indexOf(lowerOpt) !== -1 || id.indexOf(lowerOpt) !== -1) {
+      if (content.indexOf(lowerOpt) !== -1) {
+      //if (content.indexOf(lowerOpt) !== -1 || id.indexOf(lowerOpt) !== -1) {
         button.click();
         clicked = true;
       }
@@ -214,28 +215,92 @@ function clickMoreOptionsButton(cookieBanner) {
   });
 
   if (clicked) {
-    showMessage("More Options Found", "orange");
+    showMessage("More Options Button Found!", "green");
+
+    // Return the updated cookieBanner after the button has been clicked
+    //return document.querySelector("#" + cookieBanner.id);
   } else {
-    showMessage("Bad Banner", "red");
+    showMessage("More Options Button Not Found/Incompatible Banner", "red");
+
+    // If the button is not found or clicked, return null
+    return null;
+  }
+}
+
+
+function declineAllConsentOptions(updatedCookieBanner) {
+  // List of keywords related to consent options
+  const consentKeywords = ["first-party", "essential", "functional", "performance", "advertisement", "analytics", "social"];
+
+  // List of keywords for save and exit buttons
+  const exitKeywords = ["save", "exit", "close", "confirm", "done"];
+
+  // Function to check if an element's text or ID contains any keyword from an array
+  function elementMatchesKeywords(element, keywords) {
+    const text = element.innerHTML.trim().toLowerCase();
+    const id = element.id.toLowerCase();
+    return keywords.some(keyword => text.indexOf(keyword) !== -1 || id.indexOf(keyword) !== -1);
   }
 
-  return clicked;
+  // Decline consent options by unchecking checkboxes and turning off sliders
+  const checkboxesAndSliders = updatedCookieBanner.querySelectorAll('input[type="checkbox"], input[type="radio"], input[type="range"]');
+  checkboxesAndSliders.forEach(input => {
+    if (elementMatchesKeywords(input, consentKeywords)) {
+      if (input.type === "checkbox" || input.type === "radio") {
+        input.checked = false;
+      } else if (input.type === "range") {
+        input.value = input.min;
+      }
+    }
+  });
+
+  // Decline consent options by clicking "decline" or "disable" buttons
+  const buttons = updatedCookieBanner.querySelectorAll("button");
+  buttons.forEach(button => {
+    if (elementMatchesKeywords(button, consentKeywords)) {
+      button.click();
+    }
+  });
+
+  // Click "save", "exit", or similar buttons to close the banner after declining consent options
+  buttons.forEach(button => {
+    if (elementMatchesKeywords(button, exitKeywords)) {
+      button.click();
+    }
+  });
 }
+
+/*
+function allSteps() {
+  const cookieBanner = checkForCookieBanner(); // Call checkForCookieBanner() and store the returned value in cookieBanner
+  setTimeout(() => {
+    if(clickRejectButton(cookieBanner) === false) {// Call clickRejectButton() and pass the found cookie banner element or null if not found
+      const updatedCookieBanner = clickMoreOptionsButton(cookieBanner);
+      if (updatedCookieBanner) {
+        declineAllConsentOptions(updatedCookieBanner);
+      }
+    }
+  } , 250); //Wait 0.25s
+}
+*/
+
 
 function allSteps() {
   const cookieBanner = checkForCookieBanner(); // Call checkForCookieBanner() and store the returned value in cookieBanner
   setTimeout(() => {
     if(clickRejectButton(cookieBanner) === false) {// Call clickRejectButton() and pass the found cookie banner element or null if not found
-      clickMoreOptionsButton(cookieBanner);
+      setTimeout(() => {
+        clickMoreOptionsButton(cookieBanner);
+      }, 250);
     } 
   }, 250); //Wait 0.25s
+  clickRejectButton(null);
 }
-
-
 
 //Wait for the page to fully load before running
 window.onload = () => {
   setTimeout(() => {
     allSteps();
-  }, 1000); //Wait 1.5s
+  }, 1000); //Wait some amount of ms
 }
+

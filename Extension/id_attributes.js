@@ -13738,4 +13738,8 @@ window.id_attributes = [
   "_evidon_banner",
   "onetrust-consent-sdk",
   "onetrust-banner-sdk",
+  "hs-eu-cookie-confirmation",
+  "message-component message-row button-container",
+  "nhsuk-cookie-banner",
+  "artdeco-global-alert-container"
 ];
