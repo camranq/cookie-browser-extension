@@ -93,16 +93,9 @@ const options = [
   "read more about our cookies", 
   "process personal data",
   "MORE OPTIONS",
-  "show purposes"
-];
-
-const types = [
-  "non-essential cookies",
-  "third party cookies",
-  "strictly necessary cookies",
-  "performance cookies",
-  "functional cookies",
-  "targeting cookies"
+  "show purposes",
+  "manage my cookies",
+  "set cookie preferences"
 ];
 
 //Function to display a popup to the user
@@ -227,64 +220,6 @@ function clickMoreOptionsButton(cookieBanner) {
   }
 }
 
-
-function declineAllConsentOptions(updatedCookieBanner) {
-  // List of keywords related to consent options
-  const consentKeywords = ["first-party", "essential", "functional", "performance", "advertisement", "analytics", "social"];
-
-  // List of keywords for save and exit buttons
-  const exitKeywords = ["save", "exit", "close", "confirm", "done"];
-
-  // Function to check if an element's text or ID contains any keyword from an array
-  function elementMatchesKeywords(element, keywords) {
-    const text = element.innerHTML.trim().toLowerCase();
-    const id = element.id.toLowerCase();
-    return keywords.some(keyword => text.indexOf(keyword) !== -1 || id.indexOf(keyword) !== -1);
-  }
-
-  // Decline consent options by unchecking checkboxes and turning off sliders
-  const checkboxesAndSliders = updatedCookieBanner.querySelectorAll('input[type="checkbox"], input[type="radio"], input[type="range"]');
-  checkboxesAndSliders.forEach(input => {
-    if (elementMatchesKeywords(input, consentKeywords)) {
-      if (input.type === "checkbox" || input.type === "radio") {
-        input.checked = false;
-      } else if (input.type === "range") {
-        input.value = input.min;
-      }
-    }
-  });
-
-  // Decline consent options by clicking "decline" or "disable" buttons
-  const buttons = updatedCookieBanner.querySelectorAll("button");
-  buttons.forEach(button => {
-    if (elementMatchesKeywords(button, consentKeywords)) {
-      button.click();
-    }
-  });
-
-  // Click "save", "exit", or similar buttons to close the banner after declining consent options
-  buttons.forEach(button => {
-    if (elementMatchesKeywords(button, exitKeywords)) {
-      button.click();
-    }
-  });
-}
-
-/*
-function allSteps() {
-  const cookieBanner = checkForCookieBanner(); // Call checkForCookieBanner() and store the returned value in cookieBanner
-  setTimeout(() => {
-    if(clickRejectButton(cookieBanner) === false) {// Call clickRejectButton() and pass the found cookie banner element or null if not found
-      const updatedCookieBanner = clickMoreOptionsButton(cookieBanner);
-      if (updatedCookieBanner) {
-        declineAllConsentOptions(updatedCookieBanner);
-      }
-    }
-  } , 250); //Wait 0.25s
-}
-*/
-
-
 function allSteps() {
   const cookieBanner = checkForCookieBanner(); // Call checkForCookieBanner() and store the returned value in cookieBanner
   setTimeout(() => {
@@ -301,6 +236,5 @@ function allSteps() {
 window.onload = () => {
   setTimeout(() => {
     allSteps();
-  }, 1000); //Wait some amount of ms
+  }, 900); //Wait some amount of ms
 }
-
